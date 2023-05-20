@@ -358,6 +358,12 @@ func (fsrv *FileServer) ServeHTTP(w http.ResponseWriter, r *http.Request, next c
 
 	// etag is usually unset, but if the user knows what they're doing, let them override it
 	etag := w.Header().Get("Etag")
+	if etag != "" {
+		fsrv.logger.Debug("response etag already set before staticfiles invocation",
+			zap.String("etag", etag))
+	} else {
+		fsrv.logger.Debug("normal case; response etag not preset")
+	}
 
 	// check for precompressed files
 	for _, ae := range encode.AcceptedEncodings(r, fsrv.PrecompressedOrder) {
